@@ -14,9 +14,12 @@ import HeroSection from "./components/HeroSection";
 import PhotoGallery from "./components/PhotoGallery";
 import LetterSection from "./components/LetterSection";
 import backgroundMusic from "./assets/music.mp3";
+import proposalMusic from "./assets/audios/The-Metro-Proposal-MassTamilan.dev.mp3";
 import "./App.css";
 
 // Import photos from assets/solo
+import bday1 from "./assets/images/bday1.jpeg";
+import bday2 from "./assets/images/bday2.jpeg";
 import s1 from "./assets/solo/s1.png";
 import s2 from "./assets/solo/s2.png";
 import s3 from "./assets/solo/s3.png";
@@ -40,14 +43,19 @@ import t8 from "./assets/together/t8.png";
 import t9 from "./assets/together/t9.png";
 
 // Photo arrays
-const SOLO_PHOTOS = [s1, s2, s3, s4, s5, s6, s7, s8, s9];
+const SOLO_PHOTOS = [bday1, s1, s2, s3, s4, s5, s6, s7, s8, s9];
 const TOGETHER_PHOTOS = config.togetherGallery.enabled
-  ? [t1, t2, t3, t4, t5, t6, t7, t8, t9]
+  ? [bday2, t1, t2, t3, t4, t5, t6, t7, t8, t9]
   : [];
 
 // Calculate total sections and indices based on config
-const TOTAL_SECTIONS = config.togetherGallery.enabled ? 4 : 3;
-const SECTION_LETTER = config.togetherGallery.enabled ? 3 : 2;
+const hasTogether = config.togetherGallery.enabled;
+
+const SECTION_HERO = 0;
+const SECTION_SOLO = 1;
+const SECTION_TOGETHER = hasTogether ? 2 : -1;
+const SECTION_LETTER = hasTogether ? 3 : 2;
+const TOTAL_SECTIONS = SECTION_LETTER + 1;
 
 export default function App() {
   // Track if user has clicked start
@@ -58,7 +66,8 @@ export default function App() {
 
   // Audio state
   const [isMuted, setIsMuted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const heroAudioRef = useRef<HTMLAudioElement>(null);
+  const proposalAudioRef = useRef<HTMLAudioElement>(null);
 
   // Confetti effect - fires from both sides
   const runConfetti = () => {
@@ -100,9 +109,9 @@ export default function App() {
     setShowStartScreen(false);
     // Run confetti
     runConfetti();
-    // Start music
-    if (audioRef.current) {
-      audioRef.current.play().catch(() => {
+    // Start initial background music
+    if (heroAudioRef.current) {
+      heroAudioRef.current.play().catch(() => {
         // Autoplay blocked
       });
     }
@@ -110,15 +119,36 @@ export default function App() {
 
   // Toggle mute/unmute
   const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+    if (heroAudioRef.current) {
+      heroAudioRef.current.muted = nextMuted;
+    }
+    if (proposalAudioRef.current) {
+      proposalAudioRef.current.muted = nextMuted;
     }
   };
 
   // Navigate to next section
   const goToNextSection = () => {
     setCurrentSection((prev) => Math.min(prev + 1, TOTAL_SECTIONS - 1));
+  };
+
+  // When user clicks "Ready for a little surprise?" on Hero section, play audio from src/assets/audios for next pages
+  const handleHeroNext = () => {
+    // Stop hero background music
+    if (heroAudioRef.current) {
+      heroAudioRef.current.pause();
+    }
+    // Start proposal music for the next pages
+    if (proposalAudioRef.current) {
+      proposalAudioRef.current.currentTime = 0;
+      proposalAudioRef.current.muted = isMuted;
+      proposalAudioRef.current.play().catch(() => {
+        // Autoplay blocked
+      });
+    }
+    goToNextSection();
   };
 
   // Animation variants for section transitions
@@ -148,7 +178,8 @@ export default function App() {
   return (
     <div className="app">
       {/* Background Music */}
-      <audio ref={audioRef} src={backgroundMusic} loop preload="auto" />
+      <audio ref={heroAudioRef} src={backgroundMusic} loop preload="auto" />
+      <audio ref={proposalAudioRef} src={proposalMusic} loop preload="auto" />
 
       <AnimatePresence mode="wait">
         {/* Start Screen - Name Verification Gate */}
@@ -191,7 +222,7 @@ export default function App() {
       {/* Main Content - only show after start */}
       {!showStartScreen && (
         <AnimatePresence mode="wait">
-          {currentSection === 0 && (
+          {currentSection === SECTION_HERO && (
             <motion.div
               key="hero"
               variants={sectionVariants}
@@ -200,11 +231,11 @@ export default function App() {
               exit="exit"
               className="section-wrapper"
             >
-              <HeroSection onNextSection={goToNextSection} />
+              <HeroSection onNextSection={handleHeroNext} />
             </motion.div>
           )}
 
-          {currentSection === 1 && (
+          {currentSection === SECTION_SOLO && (
             <motion.div
               key="solo-gallery"
               variants={sectionVariants}
@@ -218,11 +249,12 @@ export default function App() {
                 photos={SOLO_PHOTOS}
                 buttonText={config.buttons.soloGallery}
                 onNextSection={goToNextSection}
+                singleCard={true}
               />
             </motion.div>
           )}
 
-          {config.togetherGallery.enabled && currentSection === 2 && (
+          {config.togetherGallery.enabled && currentSection === SECTION_TOGETHER && (
             <motion.div
               key="together-gallery"
               variants={sectionVariants}
@@ -236,9 +268,11 @@ export default function App() {
                 photos={TOGETHER_PHOTOS}
                 buttonText={config.togetherGallery.buttonText}
                 onNextSection={goToNextSection}
+                singleCard={true}
               />
             </motion.div>
           )}
+
 
           {currentSection === SECTION_LETTER && (
             <motion.div

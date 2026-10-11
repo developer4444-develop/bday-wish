@@ -51,7 +51,7 @@ nameHint: '4 letters, starts with "L"',   // Hint shown on wrong attempt
 ### Section Headings
 
 ```typescript
-soloGalleryTitle: "✨ My Birthday Girl ✨",  // First gallery title
+soloGalleryTitle: "✨ Birthday Girl ✨",  // First gallery title
 messageTitle: "To My Favorite Person",       // Letter section title
 footerText: "Made with 💗 just for you",     // Footer text
 ```
@@ -70,7 +70,7 @@ buttons: {
 ```typescript
 togetherGallery: {
   enabled: true,                          // Set false to disable
-  title: "💕 Our Memories 💕",            // Together gallery title
+  title: "💕 Birthday girl 💕",            // Together gallery title
   buttonText: "One last thing...",        // Together gallery button
 },
 ```

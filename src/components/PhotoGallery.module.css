@@ -119,6 +119,46 @@
 }
 
 /* ==========================================
+   Single Card Showcase (Occupies 9 cards space)
+   ========================================== */
+.singleCardFrame {
+  cursor: pointer;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-1.5deg);
+  transform-origin: center center;
+  margin: 0.25rem 0;
+}
+
+.singlePolaroid {
+  background: white;
+  padding: min(2vh, 16px) min(2vh, 16px) min(5.5vh, 46px) min(2vh, 16px);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(244, 114, 182, 0.22),
+    0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.singleCardFrame:hover .singlePolaroid {
+  box-shadow: 0 18px 45px rgba(244, 114, 182, 0.35),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.singlePhoto {
+  width: min(72vw, 48vh, 440px);
+  height: min(72vw, 48vh, 440px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  border-radius: 4px;
+}
+
+/* ==========================================
    Decorative Side Borders - Romantic Style
    ========================================== */
 .sideBorderLeft,
@@ -279,6 +319,11 @@
   .photo {
     width: min(20vw, 20vh);
   }
+
+  .singlePhoto {
+    width: min(58vw, 50vh, 440px);
+    height: min(58vw, 50vh, 440px);
+  }
 }
 
 /* ==========================================
@@ -298,8 +343,17 @@
     padding: min(0.8vh, 4px) min(0.8vh, 4px) min(2vh, 14px) min(0.8vh, 4px);
   }
 
+  .singlePolaroid {
+    padding: min(1.5vh, 10px) min(1.5vh, 10px) min(4vh, 32px) min(1.5vh, 10px);
+  }
+
   .photo {
     width: min(26vw, 22vh);
+  }
+
+  .singlePhoto {
+    width: min(78vw, 46vh, 330px);
+    height: min(78vw, 46vh, 330px);
   }
 
   .heading {
@@ -328,6 +382,11 @@
 
   .photo {
     width: min(14vw, 18vh);
+  }
+
+  .singlePhoto {
+    width: min(42vw, 52vh, 460px);
+    height: min(42vw, 52vh, 460px);
   }
 }
 

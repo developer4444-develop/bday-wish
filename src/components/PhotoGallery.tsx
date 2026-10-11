@@ -17,6 +17,8 @@ interface PhotoGalleryProps {
   buttonText: string;
   /** Callback when user clicks "Continue" button */
   onNextSection: () => void;
+  /** Whether to display a single showcase card instead of the 3x3 grid */
+  singleCard?: boolean;
 }
 
 /** Rotation angles for polaroid effect */
@@ -27,7 +29,10 @@ export default function PhotoGallery({
   photos,
   buttonText,
   onNextSection,
+  singleCard,
 }: PhotoGalleryProps) {
+  const isSingle = singleCard || photos.length === 1;
+
   return (
     <section className={styles.gallery}>
       {/* Decorative Side Borders */}
@@ -60,38 +65,64 @@ export default function PhotoGallery({
         {title}
       </motion.h2>
 
-      {/* 3x3 Photo Grid */}
-      <div className={styles.photoGrid}>
-        {photos.map((photoUrl, index) => (
-          <motion.div
-            key={index}
-            className={styles.photoFrame}
-            style={{ transform: `rotate(${ROTATIONS[index % ROTATIONS.length]}deg)` }}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 0.5,
-              delay: index * 0.08,
-              ease: "easeOut",
-            }}
-            whileHover={{
-              scale: 1.1,
-              rotate: 0,
-              zIndex: 20,
-              transition: { duration: 0.2 },
-            }}
-          >
-            <div className={styles.polaroid}>
-              <img
-                src={photoUrl}
-                alt={`Memory ${index + 1}`}
-                className={styles.photo}
-                draggable={false}
-              />
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      {/* Photo Showcase: 1 Card or 3x3 Grid */}
+      {isSingle ? (
+        <motion.div
+          className={styles.singleCardFrame}
+          initial={{ opacity: 0, scale: 0.9, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{
+            duration: 0.6,
+            ease: "easeOut",
+          }}
+          whileHover={{
+            scale: 1.03,
+            rotate: 0,
+            transition: { duration: 0.25 },
+          }}
+        >
+          <div className={styles.singlePolaroid}>
+            <img
+              src={photos[0]}
+              alt={title || "Memory"}
+              className={styles.singlePhoto}
+              draggable={false}
+            />
+          </div>
+        </motion.div>
+      ) : (
+        <div className={styles.photoGrid}>
+          {photos.map((photoUrl, index) => (
+            <motion.div
+              key={index}
+              className={styles.photoFrame}
+              style={{ transform: `rotate(${ROTATIONS[index % ROTATIONS.length]}deg)` }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.08,
+                ease: "easeOut",
+              }}
+              whileHover={{
+                scale: 1.1,
+                rotate: 0,
+                zIndex: 20,
+                transition: { duration: 0.2 },
+              }}
+            >
+              <div className={styles.polaroid}>
+                <img
+                  src={photoUrl}
+                  alt={`Memory ${index + 1}`}
+                  className={styles.photo}
+                  draggable={false}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Continue Button */}
       <motion.button

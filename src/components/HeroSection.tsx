@@ -6,7 +6,7 @@
    ========================================== */
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import styles from "./HeroSection.module.css";
 import { config } from "../config";
 import bannerImg from "../assets/banner.gif";
@@ -18,10 +18,10 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onNextSection }: HeroSectionProps) {
-  // State to show the button after animations complete
+  // State to show the button after animations complete (5 seconds)
   const [showButton, setShowButton] = useState(false);
 
-  // Show button after a delay for the animations to play
+  // Show button after 5 seconds after that page is opened
   useEffect(() => {
     const timer = setTimeout(() => setShowButton(true), 5000);
     return () => clearTimeout(timer);
@@ -50,31 +50,31 @@ export default function HeroSection({ onNextSection }: HeroSectionProps) {
       />
 
       {/* Next Surprise Button */}
-      <motion.button
-        className={`btn-primary ${styles.nextButton}`}
-        onClick={onNextSection}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{
-          opacity: showButton ? 1 : 0,
-          y: showButton ? 0 : 12,
-        }}
-        transition={{
-          duration: 1.5,
-          ease: [0.16, 1, 0.3, 1],
-        }}
-        whileHover={
-          showButton
-            ? { scale: 1.02, transition: { duration: 0.4, ease: "easeOut" } }
-            : {}
-        }
-        whileTap={showButton ? { scale: 0.98 } : {}}
-        style={{
-          pointerEvents: showButton ? "auto" : "none",
-          marginTop: "4rem",
-        }}
-      >
-        {config.buttons.hero}
-      </motion.button>
+      <AnimatePresence>
+        {showButton && (
+          <motion.button
+            className={`btn-primary ${styles.nextButton}`}
+            onClick={onNextSection}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{
+              duration: 1.2,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            whileHover={{
+              scale: 1.02,
+              transition: { duration: 0.3, ease: "easeOut" },
+            }}
+            whileTap={{ scale: 0.98 }}
+            style={{
+              marginTop: "4rem",
+            }}
+          >
+            {config.buttons.hero}
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Decorative Elements */}
       <div className={styles.decorativeCircle1} />
