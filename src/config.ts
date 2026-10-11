@@ -12,7 +12,7 @@ export const config = {
 
   /* Section Headings */
   soloGalleryTitle: "✨ Birthday Girl ✨", // solo gallery title
-  messageTitle: "To My Favorite Person", // letter section title
+  messageTitle: "To My......", // letter section title
   footerText: "", // footer text
 
   /* Button Labels */
